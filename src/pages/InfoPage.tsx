@@ -60,10 +60,10 @@ export default function InfoPage() {
   const { language } = useLanguage();
 
   const carouselImages = [
-    './contenido/informacion/Danza_1.jpg',
-    './contenido/informacion/Danza_2.jpg',
-    './contenido/informacion/Danza_3.jpg',
-    './contenido/informacion/Danza_4.jpg',
+    '/contenido/informacion/Danza_1.jpg',
+    '/contenido/informacion/Danza_2.jpg',
+    '/contenido/informacion/Danza_3.jpg',
+    '/contenido/informacion/Danza_4.jpg',
   ];
 
   useEffect(() => {

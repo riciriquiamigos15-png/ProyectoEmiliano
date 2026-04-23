@@ -226,7 +226,7 @@ export default function HomePage() {
               <img 
                 alt={copy.heroImageAlt} 
                 className="w-full h-full object-cover" 
-                src="./contenido/inicio/Inicio_2.jpg" 
+                src="/contenido/inicio/Inicio_2.jpg" 
               />
               <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl"></div>
             </div>
@@ -280,7 +280,7 @@ export default function HomePage() {
               <img 
                 alt={copy.historyImageAlt} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60" 
-                src="./contenido/inicio/Inicio_3.jpg" 
+                src="/contenido/inicio/Inicio_3.jpg" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent"></div>
               <div className="absolute bottom-0 p-10">
@@ -302,7 +302,7 @@ export default function HomePage() {
               <img 
                 alt={copy.artImageAlt} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-50" 
-                src="./contenido/inicio/Inicio_4.jpg" 
+                src="/contenido/inicio/Inicio_4.jpg" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent"></div>
               <div className="absolute bottom-0 p-8">
@@ -322,7 +322,7 @@ export default function HomePage() {
               <img 
                 alt={copy.musicImageAlt} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-50" 
-                src="./contenido/inicio/Inicio_5.jpg" 
+                src="/contenido/inicio/Inicio_5.jpg" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent"></div>
               <div className="absolute bottom-0 p-6">

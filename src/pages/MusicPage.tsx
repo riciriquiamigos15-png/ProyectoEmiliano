@@ -138,7 +138,7 @@ export default function MusicPage() {
               </button>
               <audio
                 ref={audioRef}
-                src="./contenido/musica/SOLDADO DE CRISTO BANDA NIÑA MARIA  AUDIO OFICIAL..mp3"
+                src="/contenido/musica/SOLDADO DE CRISTO BANDA NIÑA MARIA  AUDIO OFICIAL..mp3"
                 onEnded={handleAudioEnd}
               />
             </div>
@@ -149,7 +149,7 @@ export default function MusicPage() {
             <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl relative z-10">
               <img
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-110 hover:scale-100"
-                src="./contenido/musica/Banda_Pillaro2.png"
+                src="/contenido/musica/Banda_Pillaro2.png"
                 alt={copy.heroAlt}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60"></div>
@@ -177,7 +177,7 @@ export default function MusicPage() {
             <div className="md:col-span-2 md:row-span-2 bg-surface-variant/60 backdrop-blur-xl p-8 rounded-xl border border-outline-variant/15 flex flex-col justify-end min-h-[400px] relative overflow-hidden group">
               <img
                 className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity"
-                src="./contenido/musica/Banda_Pillaro.png"
+                src="/contenido/musica/Banda_Pillaro.png"
                 alt={language === 'es' ? 'Músicos Tradicionales' : 'Traditional musicians'}
               />
               <div className="relative z-10">

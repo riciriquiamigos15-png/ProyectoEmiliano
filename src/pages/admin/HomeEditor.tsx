@@ -20,19 +20,19 @@ export default function HomeEditor() {
     heroTitleHighlight: 'DEL FUEGO',
     heroSubtitle: 'Tradición Milenaria',
     heroDescription: 'Sumérgete en la danza frenética de los diablos. Una explosión de arte, música y herencia que late en el corazón de los Andes.',
-    heroImage: 'contenido/inicio/Inicio_1.jpg',
+    heroImage: '/contenido/inicio/Inicio_1.jpg',
     welcomeTitle: 'La Sangre de una',
     welcomeTitleHighlight: 'Tierra Indomable',
     welcomeDescription: 'Píllaro no solo celebra una fiesta; revive su identidad. La Diablada es el grito de libertad de un pueblo que transformó la sátira en arte y el movimiento en resistencia cultural.',
-    welcomeImage: 'contenido/inicio/Inicio_2.jpg',
+    welcomeImage: '/contenido/inicio/Inicio_2.jpg',
     historyTitle: 'HISTORIA',
-    historyImage: 'contenido/inicio/Inicio_3.jpg',
+    historyImage: '/contenido/inicio/Inicio_3.jpg',
     artTitle: 'ARTE',
-    artImage: 'contenido/inicio/Inicio_4.jpg',
+    artImage: '/contenido/inicio/Inicio_4.jpg',
     musicTitle: 'MÚSICA',
-    musicImage: 'contenido/musica/Banda_Pillaro.png',
+    musicImage: '/contenido/musica/Banda_Pillaro.png',
     infoTitle: 'INFORMACIÓN',
-    infoImage: 'contenido/informacion/Danza_1.jpg',
+    infoImage: '/contenido/informacion/Danza_1.jpg',
   });
 
   useEffect(() => {
@@ -44,11 +44,11 @@ export default function HomeEditor() {
   const loadAvailableImages = async () => {
     setLoadingImages(true);
     setAvailableImages([
-      { name: 'Inicio_1.jpg', path: 'contenido/inicio/Inicio_1.jpg', url: '/contenido/inicio/Inicio_1.jpg' },
-      { name: 'Inicio_2.jpg', path: 'contenido/inicio/Inicio_2.jpg', url: '/contenido/inicio/Inicio_2.jpg' },
-      { name: 'Inicio_3.jpg', path: 'contenido/inicio/Inicio_3.jpg', url: '/contenido/inicio/Inicio_3.jpg' },
-      { name: 'Inicio_4.jpg', path: 'contenido/inicio/Inicio_4.jpg', url: '/contenido/inicio/Inicio_4.jpg' },
-      { name: 'Inicio_5.jpg', path: 'contenido/inicio/Inicio_5.jpg', url: '/contenido/inicio/Inicio_5.jpg' },
+      { name: 'Inicio_1.jpg', path: '/contenido/inicio/Inicio_1.jpg', url: '/contenido/inicio/Inicio_1.jpg' },
+      { name: 'Inicio_2.jpg', path: '/contenido/inicio/Inicio_2.jpg', url: '/contenido/inicio/Inicio_2.jpg' },
+      { name: 'Inicio_3.jpg', path: '/contenido/inicio/Inicio_3.jpg', url: '/contenido/inicio/Inicio_3.jpg' },
+      { name: 'Inicio_4.jpg', path: '/contenido/inicio/Inicio_4.jpg', url: '/contenido/inicio/Inicio_4.jpg' },
+      { name: 'Inicio_5.jpg', path: '/contenido/inicio/Inicio_5.jpg', url: '/contenido/inicio/Inicio_5.jpg' },
     ]);
     setLoadingImages(false);
   };
