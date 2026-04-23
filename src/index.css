@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;800;900&family=Manrope:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Epilogue", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #ffb3ac;
+  --color-primary-container: #d32f2f;
+  --color-on-primary-container: #fff2f0;
+  
+  --color-secondary: #e9c349;
+  --color-secondary-container: #af8d11;
+  --color-on-secondary-container: #342800;
+
+  --color-surface: #131313;
+  --color-surface-dim: #131313;
+  --color-surface-bright: #393939;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #201f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353534;
+
+  --color-outline: #ab8985;
+  --color-outline-variant: #5b403d;
+
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #e4beba;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+}
+
+.editor-canvas::-webkit-scrollbar {
+  width: 6px;
+}
+
+.editor-canvas::-webkit-scrollbar-track {
+  @apply bg-surface;
+}
+
+.editor-canvas::-webkit-scrollbar-thumb {
+  @apply bg-surface-container-highest rounded-full;
+}
