@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diablada Pillareña | Proyecto Emiliano</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8f9fb;
+      --text: #1f2937;
+      --primary: #9f1239;
+      --accent: #0369a1;
+      --card: #ffffff;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      background: linear-gradient(130deg, #7f1d1d, #9f1239 50%, #0369a1);
+      color: #fff;
+      padding: 2.5rem 1.2rem;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      gap: .8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    nav a {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      padding: .35rem .8rem;
+      color: #fff;
+      text-decoration: none;
+      font-size: .92rem;
+    }
+    main {
+      max-width: 1050px;
+      margin: 1rem auto 2rem;
+      padding: 0 1rem;
+      display: grid;
+      gap: 1rem;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+    h2 { margin-top: 0; color: var(--primary); }
+    .grid {
+      display: grid;
+      gap: .8rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .tile {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .8rem;
+      background: #fff;
+    }
+    .visual {
+      height: 125px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: .55rem;
+      text-align: center;
+      padding: .6rem;
+    }
+    .mask { background: linear-gradient(120deg, #6b21a8, #be185d); }
+    .costume { background: linear-gradient(120deg, #0f766e, #0369a1); }
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-bottom: .7rem;
+    }
+    button {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      padding: .45rem .7rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button.secondary {
+      background: #fff;
+      color: var(--accent);
+    }
+    form {
+      display: grid;
+      gap: .55rem;
+      max-width: 460px;
+    }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: .55rem;
+      font: inherit;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .status {
+      margin-top: .55rem;
+      padding: .55rem .7rem;
+      border-radius: 8px;
+      font-size: .92rem;
+      background: #ecfeff;
+      border: 1px solid #bae6fd;
+      display: none;
+    }
+    ul { padding-left: 1.2rem; }
+    footer {
+      text-align: center;
+      color: #4b5563;
+      font-size: .92rem;
+      margin: 1rem 0 1.7rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Diablada Pillareña</h1>
+    <p>Plataforma cultural para difundir la historia, tradiciones y símbolos del cantón Píllaro.</p>
+    <nav>
+      <a href="#historia">Historia</a>
+      <a href="#personajes">Personajes</a>
+      <a href="#musica">Música</a>
+      <a href="#galeria">Vestimentas y máscaras</a>
+      <a href="#registro">Registro</a>
+      <a href="#admin">Administración</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="historia">
+      <h2>Historia y tradiciones</h2>
+      <p>
+        La Diablada Pillareña se celebra cada año en Píllaro, entre enero y el inicio de febrero.
+        Esta manifestación artística y comunitaria reúne comparsas, música y danza para preservar la
+        memoria local y fortalecer la identidad cultural.
+      </p>
+      <details>
+        <summary><strong>Tradición 1:</strong> Desfiles por barrios y comunidades</summary>
+        <p>Las partidas recorren calles principales con bandas, personajes típicos y máscaras elaboradas artesanalmente.</p>
+      </details>
+      <details>
+        <summary><strong>Tradición 2:</strong> Elaboración de máscaras</summary>
+        <p>Artesanos locales diseñan piezas únicas con cuernos, colores intensos y motivos que representan la fiesta.</p>
+      </details>
+      <details>
+        <summary><strong>Tradición 3:</strong> Música y danza popular</summary>
+        <p>La celebración combina ritmos tradicionales y coreografías con gran participación comunitaria.</p>
+      </details>
+    </section>
+
+    <section id="personajes">
+      <h2>Personajes representativos</h2>
+      <div class="button-row" id="characterButtons"></div>
+      <article class="tile">
+        <h3 id="characterName">Diablo</h3>
+        <p id="characterDescription">Figura principal de la festividad, reconocida por su máscara y energía en la danza.</p>
+      </article>
+    </section>
+
+    <section id="musica">
+      <h2>Música tradicional</h2>
+      <p>Selecciona una pista para reproducir y difundir el ambiente festivo de la Diablada.</p>
+      <form id="musicForm">
+        <label for="track">Pista</label>
+        <select id="track" name="track">
+          <option value="https://upload.wikimedia.org/wikipedia/commons/c/c3/Traditional_Pan_Flute_Music.ogg">Viento andino tradicional</option>
+          <option value="https://upload.wikimedia.org/wikipedia/commons/5/5c/Andean_Music_Instrumental.ogg">Instrumental andino</option>
+        </select>
+        <div class="button-row">
+          <button type="button" id="playMusic">Reproducir</button>
+          <button type="button" class="secondary" id="pauseMusic">Pausar</button>
+        </div>
+      </form>
+      <audio id="musicPlayer" controls preload="none" style="width:100%"></audio>
+      <div id="musicStatus" class="status"></div>
+    </section>
+
+    <section id="galeria">
+      <h2>Vestimentas y máscaras</h2>
+      <div class="grid">
+        <article class="tile">
+          <div class="visual mask">Máscara artesanal</div>
+          <p>Máscara de diablo con cuernos, colores vivos y detalles tallados por artesanos pillareños.</p>
+        </article>
+        <article class="tile">
+          <div class="visual costume">Traje tradicional</div>
+          <p>Vestimenta de desfile con capas, bordados y accesorios que acompañan la coreografía.</p>
+        </article>
+        <article class="tile">
+          <div class="visual mask">Máscara contemporánea</div>
+          <p>Diseño moderno que mantiene los símbolos históricos y creativos de la celebración.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="registro">
+      <h2>Registro de usuarios</h2>
+      <form id="registerForm">
+        <label for="name">Nombre completo</label>
+        <input id="name" name="name" required>
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" required>
+        <button type="submit">Registrarme</button>
+      </form>
+      <div id="registerStatus" class="status"></div>
+    </section>
+
+    <section id="admin">
+      <h2>Administración de contenido</h2>
+      <p>Acceso local para gestionar publicaciones informativas de la Diablada.</p>
+      <form id="adminAccessForm">
+        <label for="adminCode">Código de administrador</label>
+        <input id="adminCode" name="adminCode" type="password" required placeholder="Ingresa código">
+        <button type="submit">Ingresar</button>
+      </form>
+      <div id="adminAccessStatus" class="status"></div>
+      <div id="adminPanel" hidden>
+        <form id="adminForm">
+          <label for="adminTitle">Título de publicación</label>
+          <input id="adminTitle" name="adminTitle" required>
+          <label for="adminContent">Contenido</label>
+          <textarea id="adminContent" name="adminContent" required></textarea>
+          <button type="submit">Guardar publicación</button>
+        </form>
+        <h3>Publicaciones</h3>
+        <ul id="adminList"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Proyecto cultural web · Difusión de la Diablada Pillareña
+  </footer>
+
+  <script>
+    (function () {
+      var characters = [
+        {
+          name: "Diablo",
+          description: "Figura central de la Diablada, representa fuerza, creatividad y presencia escénica."
+        },
+        {
+          name: "Guaricha",
+          description: "Personaje tradicional que aporta humor, baile y dinamismo durante los recorridos."
+        },
+        {
+          name: "Capariche",
+          description: "Personaje que acompaña comparsas y simboliza expresiones populares del cantón."
+        }
+      ];
+      var buttonsContainer = document.getElementById("characterButtons");
+      var characterName = document.getElementById("characterName");
+      var characterDescription = document.getElementById("characterDescription");
+
+      characters.forEach(function (character) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "secondary";
+        button.textContent = character.name;
+        button.addEventListener("click", function () {
+          characterName.textContent = character.name;
+          characterDescription.textContent = character.description;
+        });
+        buttonsContainer.appendChild(button);
+      });
+
+      var track = document.getElementById("track");
+      var player = document.getElementById("musicPlayer");
+      var musicStatus = document.getElementById("musicStatus");
+
+      function showStatus(element, text) {
+        element.textContent = text;
+        element.style.display = "block";
+      }
+
+      document.getElementById("playMusic").addEventListener("click", function () {
+        player.src = track.value;
+        var playAttempt = player.play();
+        if (playAttempt && typeof playAttempt.then === "function") {
+          playAttempt.then(function () {
+            showStatus(musicStatus, "Reproduciendo pista seleccionada.");
+          }).catch(function () {
+            showStatus(musicStatus, "No se pudo reproducir automáticamente. Usa los controles del reproductor.");
+          });
+        } else {
+          showStatus(musicStatus, "Reproduciendo pista seleccionada.");
+        }
+      });
+
+      document.getElementById("pauseMusic").addEventListener("click", function () {
+        player.pause();
+        showStatus(musicStatus, "Reproducción pausada.");
+      });
+
+      var registerForm = document.getElementById("registerForm");
+      var registerStatus = document.getElementById("registerStatus");
+      registerForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var formData = new FormData(registerForm);
+        var user = {
+          name: String(formData.get("name") || "").trim(),
+          email: String(formData.get("email") || "").trim().toLowerCase()
+        };
+        if (!user.name || !user.email) {
+          showStatus(registerStatus, "Completa todos los campos para registrarte.");
+          return;
+        }
+        var users = JSON.parse(localStorage.getItem("diabladaUsers") || "[]");
+        users.push(user);
+        localStorage.setItem("diabladaUsers", JSON.stringify(users));
+        registerForm.reset();
+        showStatus(registerStatus, "Registro exitoso. Usuarios registrados: " + users.length);
+      });
+
+      var adminPanel = document.getElementById("adminPanel");
+      var adminList = document.getElementById("adminList");
+      var adminStatus = document.getElementById("adminAccessStatus");
+      var ADMIN_CODE = "pillaro-diablada";
+
+      function renderPosts() {
+        var posts = JSON.parse(localStorage.getItem("diabladaAdminPosts") || "[]");
+        adminList.innerHTML = "";
+        posts.forEach(function (post, index) {
+          var li = document.createElement("li");
+          var title = document.createElement("strong");
+          title.textContent = post.title + ": ";
+          var body = document.createElement("span");
+          body.textContent = post.content + " ";
+          var remove = document.createElement("button");
+          remove.type = "button";
+          remove.textContent = "Eliminar";
+          remove.className = "secondary";
+          remove.style.marginTop = ".45rem";
+          remove.addEventListener("click", function () {
+            var currentPosts = JSON.parse(localStorage.getItem("diabladaAdminPosts") || "[]");
+            currentPosts.splice(index, 1);
+            localStorage.setItem("diabladaAdminPosts", JSON.stringify(currentPosts));
+            renderPosts();
+          });
+          li.appendChild(title);
+          li.appendChild(body);
+          li.appendChild(remove);
+          adminList.appendChild(li);
+        });
+      }
+
+      document.getElementById("adminAccessForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var providedCode = String(document.getElementById("adminCode").value || "");
+        if (providedCode !== ADMIN_CODE) {
+          showStatus(adminStatus, "Código incorrecto.");
+          adminPanel.hidden = true;
+          return;
+        }
+        showStatus(adminStatus, "Acceso concedido.");
+        adminPanel.hidden = false;
+        renderPosts();
+      });
+
+      document.getElementById("adminForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var title = String(document.getElementById("adminTitle").value || "").trim();
+        var content = String(document.getElementById("adminContent").value || "").trim();
+        if (!title || !content) {
+          return;
+        }
+        var posts = JSON.parse(localStorage.getItem("diabladaAdminPosts") || "[]");
+        posts.push({ title: title, content: content });
+        localStorage.setItem("diabladaAdminPosts", JSON.stringify(posts));
+        event.target.reset();
+        renderPosts();
+      });
+    })();
+  </script>
+</body>
+</html>
