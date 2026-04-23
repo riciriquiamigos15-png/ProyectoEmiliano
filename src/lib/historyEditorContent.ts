@@ -271,8 +271,9 @@ export function readHistoryEditorContent(): HistoryEditorContent {
 
 export async function fetchHistoryEditorContent(): Promise<HistoryEditorContent> {
   const fallback = readHistoryEditorContent();
-  const response = await apiClient.historia.editorContent.get();
 
+  // Intentar con el backend Express primero
+  const response = await apiClient.historia.editorContent.get();
   if (
     response.success
     && response.data
@@ -281,6 +282,24 @@ export async function fetchHistoryEditorContent(): Promise<HistoryEditorContent>
     && response.data.characters.every(isEditableCharacter)
   ) {
     return cloneContent(response.data);
+  }
+
+  // Fallback: leer el JSON estático (funciona en Netlify sin backend)
+  try {
+    const res = await fetch('/contenido/historia/editor-content.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (
+        data
+        && isGeneralContent(data.general)
+        && Array.isArray(data.characters)
+        && data.characters.every(isEditableCharacter)
+      ) {
+        return cloneContent(data);
+      }
+    }
+  } catch {
+    // ignorar error de fetch estático
   }
 
   return fallback;
