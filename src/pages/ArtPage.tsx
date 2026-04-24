@@ -16,6 +16,8 @@ import {
 
 export default function ArtPage() {
   const [expandedArtisan, setExpandedArtisan] = useState<string | null>(null);
+  const [isContactOpen, setIsContactOpen] = useState(true);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(true);
   const [content, setContent] = useState<ArtEditorContent>(() => readArtEditorContent());
   const { language } = useLanguage();
 
@@ -39,8 +41,31 @@ export default function ArtPage() {
   }, []);
 
   const toggleArtisan = (artisanId: string) => {
-    setExpandedArtisan((currentValue) => currentValue === artisanId ? null : artisanId);
+    setExpandedArtisan((currentValue) => {
+      const nextValue = currentValue === artisanId ? null : artisanId;
+
+      if (nextValue) {
+        setIsContactOpen(true);
+        setIsGalleryOpen(true);
+      }
+
+      return nextValue;
+    });
   };
+
+  const uiCopy = language === 'en'
+    ? {
+      contactAccordion: 'Contacts',
+      galleryAccordion: 'Gallery',
+      closeExpanded: 'Close information',
+      noContacts: 'This artisan has no published contacts yet.',
+    }
+    : {
+      contactAccordion: 'Contactos',
+      galleryAccordion: 'Galeria',
+      closeExpanded: 'Cerrar informacion',
+      noContacts: 'Este artesano todavia no tiene contactos publicados.',
+    };
 
   const general = content.general;
   const copy = getLocalizedArtGeneral(content.general, language);
@@ -294,67 +319,95 @@ export default function ArtPage() {
                       </div>
                     </div>
 
-                    <div className="bg-surface-container-high p-8 rounded-xl border border-outline-variant/20">
-                      <h3 className={`text-xl font-black mb-6 ${general.headlineFontClass}`}>{copy.contact}</h3>
-                      <div className="space-y-3">
-                        {primaryContacts.map((contact) => (
-                          <a key={contact.id} href={contact.href || '#'} className="flex items-start gap-3 rounded-2xl border border-outline-variant/20 bg-surface px-4 py-4 text-on-surface hover:border-secondary/40 hover:bg-surface-container transition-colors break-all">
-                            <span className="mt-0.5 text-secondary">{renderContactIcon(contact)}</span>
-                            <span className="min-w-0">
-                              <span className="block text-[11px] font-black uppercase tracking-[0.22em] text-on-surface-variant">{contact.label}</span>
-                              <span className="mt-1 block text-sm font-bold">{contact.value}</span>
-                            </span>
-                          </a>
-                        ))}
-                        {primaryContacts.length === 0 && socialContacts.length === 0 && (
-                          <div className="rounded-2xl border border-dashed border-outline-variant/20 px-4 py-5 text-sm text-on-surface-variant">
-                            Este artesano todavía no tiene contactos publicados.
-                          </div>
-                        )}
-                      </div>
-                      {socialContacts.length > 0 && (
-                        <div className="mt-6 pt-6 border-t border-outline-variant/20">
-                          <p className="text-on-surface-variant text-sm mb-3">{getSocialHeading(socialContacts)}</p>
-                          <div className="flex flex-wrap gap-3">
-                            {socialContacts.map((contact) => (
-                              <a key={`${artisan.id}-${contact.id}`} href={contact.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-4 py-2 text-sm font-bold text-secondary hover:bg-secondary/20">
-                                {renderSocialIcon(contact)}
-                                <span>{contact.label}</span>
-                                <span className="opacity-70">/</span>
-                                <span>{contact.value}</span>
+                    <div className="bg-surface-container-high rounded-xl border border-outline-variant/20 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setIsContactOpen((currentValue) => !currentValue)}
+                        className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-surface-container transition-colors"
+                        aria-expanded={isContactOpen}
+                      >
+                        <h3 className={`text-xl font-black ${general.headlineFontClass}`}>{uiCopy.contactAccordion}</h3>
+                        <ChevronDown className={`w-5 h-5 text-on-surface transition-transform ${isContactOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {isContactOpen && (
+                        <div className="px-6 pb-6 space-y-3 border-t border-outline-variant/20">
+                          <div className="pt-4 space-y-3">
+                            {primaryContacts.map((contact) => (
+                              <a key={contact.id} href={contact.href || '#'} className="flex items-start gap-3 rounded-2xl border border-outline-variant/20 bg-surface px-4 py-4 text-on-surface hover:border-secondary/40 hover:bg-surface-container transition-colors break-all">
+                                <span className="mt-0.5 text-secondary">{renderContactIcon(contact)}</span>
+                                <span className="min-w-0">
+                                  <span className="block text-[11px] font-black uppercase tracking-[0.22em] text-on-surface-variant">{contact.label}</span>
+                                  <span className="mt-1 block text-sm font-bold">{contact.value}</span>
+                                </span>
                               </a>
                             ))}
+                            {primaryContacts.length === 0 && socialContacts.length === 0 && (
+                              <div className="rounded-2xl border border-dashed border-outline-variant/20 px-4 py-5 text-sm text-on-surface-variant">
+                                {uiCopy.noContacts}
+                              </div>
+                            )}
                           </div>
+
+                          {socialContacts.length > 0 && (
+                            <div className="mt-6 pt-6 border-t border-outline-variant/20">
+                              <p className="text-on-surface-variant text-sm mb-3">{getSocialHeading(socialContacts)}</p>
+                              <div className="flex flex-wrap gap-3">
+                                {socialContacts.map((contact) => (
+                                  <a key={`${artisan.id}-${contact.id}`} href={contact.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-4 py-2 text-sm font-bold text-secondary hover:bg-secondary/20">
+                                    {renderSocialIcon(contact)}
+                                    <span>{contact.label}</span>
+                                    <span className="opacity-70">/</span>
+                                    <span>{contact.value}</span>
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <h3 className={`text-2xl font-black mb-6 ${general.headlineFontClass}`}>{copy.galleryTitle}</h3>
-                    
-                    <div className="hidden md:grid md:grid-cols-3 gap-6 mb-8">
-                      {artisan.gallery.map((img, idx) => (
-                        <div key={idx} className="aspect-[3/4] rounded-lg overflow-hidden bg-surface-container-low hover:ring-2 ring-secondary transition-all cursor-pointer group">
-                          <img 
-                            src={img}
-                            alt={`${copy.creationAlt} ${idx + 1}`}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    <div className="rounded-xl border border-outline-variant/20 bg-surface-container-high overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setIsGalleryOpen((currentValue) => !currentValue)}
+                        className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-surface-container transition-colors"
+                        aria-expanded={isGalleryOpen}
+                      >
+                        <h3 className={`text-2xl font-black ${general.headlineFontClass}`}>{uiCopy.galleryAccordion}</h3>
+                        <ChevronDown className={`w-5 h-5 text-on-surface transition-transform ${isGalleryOpen ? 'rotate-180' : ''}`} />
+                      </button>
 
-                    <div className="md:hidden grid grid-cols-1 gap-6">
-                      {artisan.gallery.map((img, idx) => (
-                        <div key={idx} className="aspect-[3/4] rounded-lg overflow-hidden bg-surface-container-low hover:ring-2 ring-secondary transition-all cursor-pointer group">
-                          <img 
-                            src={img}
-                            alt={`${copy.creationAlt} ${idx + 1}`}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
+                      {isGalleryOpen && (
+                        <div className="px-6 pb-6 border-t border-outline-variant/20">
+                          <div className="hidden md:grid md:grid-cols-3 gap-6 mt-6">
+                            {artisan.gallery.map((img, idx) => (
+                              <div key={idx} className="aspect-[3/4] rounded-lg overflow-hidden bg-surface-container-low hover:ring-2 ring-secondary transition-all cursor-pointer group">
+                                <img 
+                                  src={img}
+                                  alt={`${copy.creationAlt} ${idx + 1}`}
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="md:hidden grid grid-cols-1 gap-6 mt-6">
+                            {artisan.gallery.map((img, idx) => (
+                              <div key={idx} className="aspect-[3/4] rounded-lg overflow-hidden bg-surface-container-low hover:ring-2 ring-secondary transition-all cursor-pointer group">
+                                <img 
+                                  src={img}
+                                  alt={`${copy.creationAlt} ${idx + 1}`}
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
 
@@ -377,6 +430,17 @@ export default function ArtPage() {
                       </div>
                     </div>
                   )}
+
+                  <div className="flex justify-center mt-6">
+                    <button
+                      type="button"
+                      onClick={() => toggleArtisan(artisan.id)}
+                      className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-2.5 text-sm font-black uppercase tracking-[0.15em] text-white hover:bg-white/20 transition-colors"
+                    >
+                      <ChevronDown className="w-4 h-4 -rotate-180" />
+                      {uiCopy.closeExpanded}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

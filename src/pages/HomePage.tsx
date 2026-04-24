@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function HomePage() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
 
   const copy = {
@@ -18,7 +18,6 @@ export default function HomePage() {
       secondaryCta: 'EXPLORAR GALERÍA',
       audioPlay: 'Reproducir música',
       audioPause: 'Pausar música',
-      languageLabel: 'Idioma',
       welcomeTitle: 'La Sangre de una',
       welcomeAccent: 'Tierra Indomable',
       welcomeText1: 'Píllaro no solo celebra una fiesta; revive su identidad. La Diablada es el grito de libertad de un pueblo que transformó la sátira en arte y el movimiento en resistencia cultural.',
@@ -52,7 +51,6 @@ export default function HomePage() {
       secondaryCta: 'EXPLORE GALLERY',
       audioPlay: 'Play music',
       audioPause: 'Pause music',
-      languageLabel: 'Language',
       welcomeTitle: 'The Blood of an',
       welcomeAccent: 'Untamed Land',
       welcomeText1: 'Píllaro does not simply celebrate a festival; it relives its identity. The Diablada is the cry of freedom of a people who transformed satire into art and movement into cultural resistance.',
@@ -159,42 +157,25 @@ export default function HomePage() {
           >
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 translate-x-[1px]" />}
           </button>
-
-          <div className="flex items-center gap-2 rounded-full bg-black/25 p-1">
-            <span className="sr-only">{copy.languageLabel}</span>
-            {(['es', 'en'] as const).map((option) => {
-              const active = language === option;
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => setLanguage(option)}
-                  className={`min-w-11 rounded-full px-3 py-2 text-xs font-black uppercase tracking-[0.2em] transition ${active ? 'bg-primary-container text-on-primary-container shadow-[0_8px_24px_rgba(211,47,47,0.35)]' : 'text-neutral-300 hover:text-white'}`}
-                >
-                  {option}
-                </button>
-              );
-            })}
-          </div>
         </div>
         
-        <div className="relative z-10 text-center px-6 max-w-4xl">
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl">
           <span className="inline-block px-4 py-1 mb-6 text-secondary font-bold tracking-[0.2em] uppercase bg-secondary/10 backdrop-blur-sm rounded-full text-xs">
             {copy.badge}
           </span>
           
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-on-surface tracking-tighter leading-none mb-8 font-headline">
+          <h1 className="text-4xl sm:text-5xl md:text-8xl lg:text-9xl font-black text-on-surface tracking-tighter leading-none mb-8 font-headline">
             {copy.title} <br/>DIABLADA <span className="text-primary-container">{copy.titleAccent}</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto font-medium leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto font-medium leading-relaxed">
             {copy.description}
           </p>
           
-          <div className="mt-12 flex flex-col md:flex-row gap-6 justify-center items-center">
+          <div className="mt-10 flex flex-col md:flex-row gap-4 sm:gap-6 justify-center items-center">
             <Link 
               to="/history"
-              className="px-10 py-4 bg-primary-container text-on-primary-container rounded-lg font-extrabold text-lg flex items-center gap-3 hover:bg-tertiary-container transition-all"
+              className="w-full sm:w-auto px-8 sm:px-10 py-4 bg-primary-container text-on-primary-container rounded-lg font-extrabold text-base sm:text-lg flex items-center justify-center gap-3 hover:bg-tertiary-container transition-all"
             >
               {copy.primaryCta}
               <Music className="w-5 h-5" />
@@ -202,7 +183,7 @@ export default function HomePage() {
             
             <Link 
               to="/art"
-              className="px-10 py-4 border border-secondary/30 text-secondary rounded-lg font-bold text-lg hover:bg-secondary/10 transition-all"
+              className="w-full sm:w-auto px-8 sm:px-10 py-4 border border-secondary/30 text-secondary rounded-lg font-bold text-base sm:text-lg text-center hover:bg-secondary/10 transition-all"
             >
               {copy.secondaryCta}
             </Link>
@@ -218,8 +199,8 @@ export default function HomePage() {
       </section>
 
       {/* Welcome Section */}
-      <section className="py-32 px-8 bg-surface">
-        <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-8 bg-surface">
+        <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
           <div className="lg:w-1/2 relative">
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary-container/20 blur-[100px] rounded-full"></div>
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
@@ -261,7 +242,7 @@ export default function HomePage() {
       </section>
 
       {/* Bento Grid */}
-      <section className="py-24 px-8 bg-surface-container-low">
+      <section className="py-16 sm:py-24 px-4 sm:px-8 bg-surface-container-low">
         <div className="max-w-screen-xl mx-auto">
           <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
@@ -350,7 +331,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-neutral-950 border-t border-neutral-800/40 w-full py-12 px-8">
+      <footer className="bg-neutral-950 border-t border-neutral-800/40 w-full py-12 px-4 sm:px-8">
         <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="flex flex-col items-center md:items-start">
             <span className="font-headline font-bold text-neutral-100 text-xl mb-2">La Diablada Pillareña</span>

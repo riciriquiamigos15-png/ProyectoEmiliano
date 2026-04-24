@@ -13,7 +13,9 @@ import {
   Search,
   ChevronRight,
   Eye,
-  History as HistoryIcon
+  History as HistoryIcon,
+  Menu,
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -27,7 +29,8 @@ interface LayoutProps {
 
 export default function Layout({ children, mode = 'cms' }: LayoutProps) {
   const location = useLocation();
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+  const [isMobileNavOpen, setIsMobileNavOpen] = React.useState(false);
 
   const copy = {
     es: {
@@ -39,6 +42,7 @@ export default function Layout({ children, mode = 'cms' }: LayoutProps) {
         { label: 'Información', path: '/info' },
       ],
       login: 'Acceder',
+      languageLabel: 'Idioma',
       contact: 'Contacto',
       footerClaim: '© 2024 La Diablada Pillareña. Patrimonio Cultural del Ecuador.',
     },
@@ -51,10 +55,15 @@ export default function Layout({ children, mode = 'cms' }: LayoutProps) {
         { label: 'Info', path: '/info' },
       ],
       login: 'Log in',
+      languageLabel: 'Language',
       contact: 'Contact',
       footerClaim: '© 2024 La Diablada Pillareña. Cultural Heritage of Ecuador.',
     },
   }[language];
+
+  React.useEffect(() => {
+    setIsMobileNavOpen(false);
+  }, [location.pathname]);
 
   const navItems = [
     { label: 'Panel de Control', icon: LayoutDashboard, path: '/' },
@@ -68,7 +77,7 @@ export default function Layout({ children, mode = 'cms' }: LayoutProps) {
     return (
       <div className="min-h-screen bg-surface flex flex-col">
         <header className="fixed top-0 w-full z-50 bg-neutral-950/60 backdrop-blur-xl border-b border-white/5">
-          <div className="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
+          <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 w-full max-w-screen-2xl mx-auto gap-3">
             <Link to="/" className="shrink-0">
               <BrandLogo compact />
             </Link>
@@ -86,12 +95,99 @@ export default function Layout({ children, mode = 'cms' }: LayoutProps) {
                 </Link>
               ))}
             </div>
-            <Link to="/login" className="bg-secondary text-on-secondary px-6 py-2 rounded-lg font-bold hover:brightness-110 transition-all text-sm uppercase tracking-wide">
-              {copy.login}
-            </Link>
+
+            <div className="hidden md:flex items-center gap-3">
+              <div className="flex items-center gap-1 rounded-full bg-black/25 p-1 border border-white/10">
+                <span className="sr-only">{copy.languageLabel}</span>
+                {(['es', 'en'] as const).map((option) => {
+                  const active = language === option;
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setLanguage(option)}
+                      className={cn(
+                        'min-w-10 rounded-full px-3 py-1.5 text-xs font-black uppercase tracking-[0.2em] transition',
+                        active
+                          ? 'bg-primary-container text-on-primary-container'
+                          : 'text-neutral-300 hover:text-white'
+                      )}
+                    >
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <Link to="/login" className="bg-secondary text-on-secondary px-6 py-2 rounded-lg font-bold hover:brightness-110 transition-all text-sm uppercase tracking-wide">
+                {copy.login}
+              </Link>
+            </div>
+
+            <button
+              type="button"
+              className="md:hidden inline-flex items-center justify-center rounded-lg border border-white/15 bg-black/30 text-neutral-100 p-2"
+              onClick={() => setIsMobileNavOpen((prev) => !prev)}
+              aria-label={isMobileNavOpen ? 'Cerrar menu' : 'Abrir menu'}
+              aria-expanded={isMobileNavOpen}
+            >
+              {isMobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
+
+          {isMobileNavOpen && (
+            <div className="md:hidden border-t border-white/10 bg-neutral-950/90 backdrop-blur-xl px-4 pb-4 pt-3">
+              <nav className="flex flex-col gap-1">
+                {copy.publicLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={cn(
+                      'rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
+                      location.pathname === link.path
+                        ? 'bg-primary-container/20 text-yellow-400'
+                        : 'text-neutral-200 hover:bg-white/5'
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-1 rounded-full bg-black/25 p-1 border border-white/10">
+                  <span className="sr-only">{copy.languageLabel}</span>
+                  {(['es', 'en'] as const).map((option) => {
+                    const active = language === option;
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setLanguage(option)}
+                        className={cn(
+                          'min-w-10 rounded-full px-3 py-1.5 text-xs font-black uppercase tracking-[0.2em] transition',
+                          active
+                            ? 'bg-primary-container text-on-primary-container'
+                            : 'text-neutral-300 hover:text-white'
+                        )}
+                      >
+                        {option}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <Link
+                  to="/login"
+                  className="bg-secondary text-on-secondary px-4 py-2 rounded-lg font-bold hover:brightness-110 transition-all text-xs uppercase tracking-wide"
+                >
+                  {copy.login}
+                </Link>
+              </div>
+            </div>
+          )}
         </header>
-        <main className="flex-1 pt-20">
+        <main className="flex-1 pt-24 md:pt-20">
           {children}
         </main>
         <footer className="bg-neutral-950 w-full py-12 px-8 border-t border-neutral-800/40">
