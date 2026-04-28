@@ -688,26 +688,44 @@ export function getLocalizedProcessCard(card: ArtProcessCard, language: ArtTrans
   };
 }
 
-export async function fetchArtEditorContent(): Promise<ArtEditorContent> {
+export async function fetchArtEditorContent(options?: { preferApi?: boolean }): Promise<ArtEditorContent> {
   const fallback = readArtEditorContent();
+  const preferApi = options?.preferApi === true;
 
-  // Intentar con el backend Express primero
+  // En frontend-only preferimos el JSON estático para evitar errores de red si no hay backend.
+  if (!preferApi) {
+    try {
+      const res = await fetch('/contenido/arte/editor-content.json');
+      if (res.ok) {
+        const data = await res.json();
+        if (data) {
+          return normalizeArtEditorContent(data);
+        }
+      }
+    } catch {
+      // ignorar error de fetch estático
+    }
+  }
+
+  // Intentar con el backend Express
   const response = await apiClient.arte.editorContent.get();
   if (response.success && response.data) {
     return normalizeArtEditorContent(response.data);
   }
 
-  // Fallback: leer el JSON estático (funciona en Netlify sin backend)
-  try {
-    const res = await fetch('/contenido/arte/editor-content.json');
-    if (res.ok) {
-      const data = await res.json();
-      if (data) {
-        return normalizeArtEditorContent(data);
+  // Fallback final: leer JSON estático
+  if (preferApi) {
+    try {
+      const res = await fetch('/contenido/arte/editor-content.json');
+      if (res.ok) {
+        const data = await res.json();
+        if (data) {
+          return normalizeArtEditorContent(data);
+        }
       }
+    } catch {
+      // ignorar error de fetch estático
     }
-  } catch {
-    // ignorar error de fetch estático
   }
 
   return fallback;

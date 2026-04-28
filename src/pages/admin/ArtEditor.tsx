@@ -350,7 +350,7 @@ export default function ArtEditor() {
     let isMounted = true;
 
     const syncArtContent = async () => {
-      const nextContent = await fetchArtEditorContent();
+      const nextContent = await fetchArtEditorContent({ preferApi: true });
       if (!isMounted) {
         return;
       }

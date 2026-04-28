@@ -17,7 +17,8 @@ interface ApiResponse<T> {
 async function request<T>(
   method: string,
   endpoint: string,
-  body?: any
+  body?: any,
+  options?: { silent?: boolean }
 ): Promise<ApiResponse<T>> {
   try {
     const options: RequestInit = {
@@ -40,7 +41,9 @@ async function request<T>(
 
     return result;
   } catch (error) {
-    console.error(`Error en ${method} ${endpoint}:`, error);
+    if (!options?.silent) {
+      console.error(`Error en ${method} ${endpoint}:`, error);
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Error desconocido',
@@ -102,7 +105,7 @@ export const apiClient = {
 
     editorContent: {
       get: () =>
-        request<any>('GET', '/arte/editor-content'),
+        request<any>('GET', '/arte/editor-content', undefined, { silent: true }),
 
       save: (data: any) =>
         request<any>('POST', '/arte/editor-content', data),
