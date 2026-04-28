@@ -33,6 +33,7 @@ import {
   type ArtGeneralContent,
   type ArtProcessCard,
 } from '@/lib/artEditorContent';
+import { apiClient } from '@/services/api';
 
 type EditorSection = 'general' | 'masks' | 'info' | 'contacts' | 'gallery' | 'media' | 'cards' | 'process';
 
@@ -87,6 +88,22 @@ function toSlug(value: string) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
+}
+
+function makeUniqueSlug(baseSlug: string, existingIds: string[]) {
+  const normalizedBase = toSlug(baseSlug) || 'nuevo-caretero';
+  if (!existingIds.includes(normalizedBase)) {
+    return normalizedBase;
+  }
+
+  let counter = 2;
+  let candidate = `${normalizedBase}-${counter}`;
+  while (existingIds.includes(candidate)) {
+    counter += 1;
+    candidate = `${normalizedBase}-${counter}`;
+  }
+
+  return candidate;
 }
 
 function buildContactHref(kind: ArtContactKind, value: string) {
@@ -263,17 +280,24 @@ function readFileAsDataUrl(file: File) {
   });
 }
 
-async function uploadFileToArteFolder(file: File) {
+function getFileExtension(filename: string) {
+  const index = filename.lastIndexOf('.');
+  return index >= 0 ? filename.slice(index).toLowerCase() : '';
+}
+
+async function uploadFileToArteFolder(file: File, folder: string, filenameOverride?: string) {
   const dataUrl = await readFileAsDataUrl(file);
   const base64data = dataUrl.split(',')[1] ?? '';
+  const filename = filenameOverride || file.name;
 
-  const response = await fetch('http://localhost:5000/api/upload/arte', {
+  const response = await fetch('http://localhost:5000/api/upload', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      filename: file.name,
+      folder,
+      filename,
       base64data,
     }),
   });
@@ -295,6 +319,7 @@ export default function ArtEditor() {
   const [statusMessage, setStatusMessage] = useState('');
   const [statusType, setStatusType] = useState<'success' | 'error'>('success');
   const [uploadingLabel, setUploadingLabel] = useState('');
+  const [newArtisanSlugInput, setNewArtisanSlugInput] = useState('');
 
   const currentTab = searchParams.get('tab');
   const editorSection: EditorSection = currentTab === 'masks'
@@ -310,6 +335,10 @@ export default function ArtEditor() {
   const selectedArtisan = useMemo(() => {
     return content.artisans.find((artisan) => artisan.id === selectedArtisanId) ?? content.artisans[0];
   }, [content.artisans, selectedArtisanId]);
+
+  const selectedArtisanFolderSlug = useMemo(() => {
+    return toSlug(selectedArtisan?.id || selectedArtisan?.name || 'nuevo-caretero');
+  }, [selectedArtisan?.id, selectedArtisan?.name]);
 
   const selectedArtisanIdRef = useRef(selectedArtisanId);
 
@@ -450,18 +479,23 @@ export default function ArtEditor() {
     }));
   }
 
-  function addArtisan() {
+  async function addArtisan() {
+    const artisanSlug = makeUniqueSlug(newArtisanSlugInput, content.artisans.map((artisan) => artisan.id));
     const newArtisan: ArtArtisan = {
-      id: `artisan-${Date.now()}`,
+      id: artisanSlug,
       name: 'Nuevo artesano',
       title: 'Nuevo cuadro',
       technique: 'Técnica artesanal',
       desc: 'Descripción breve de la obra o del artesano.',
       fullInfo: 'Biografía o información ampliada.',
       bibliography: '',
-      img: '',
-      gallery: ['', '', ''],
-      video: '',
+      img: `/contenido/arte/${artisanSlug}/01_perfil/principal.jpg`,
+      gallery: [
+        `/contenido/arte/${artisanSlug}/02_galeria/obra-01.jpg`,
+        `/contenido/arte/${artisanSlug}/02_galeria/obra-02.jpg`,
+        `/contenido/arte/${artisanSlug}/02_galeria/obra-03.jpg`,
+      ],
+      video: `/contenido/arte/${artisanSlug}/04_video/proceso.mp4`,
       contacts: [],
       theme: 'primary',
       translations: {
@@ -475,8 +509,17 @@ export default function ArtEditor() {
     }));
     setSelectedArtisanId(newArtisan.id);
     setSearchParams({ tab: 'cards' });
+
+    const folderResult = await apiClient.arte.artisans.ensureFolders(artisanSlug);
+    if (!folderResult.success) {
+      setStatusType('error');
+      setStatusMessage(`Artesano creado, pero no se pudo preparar carpetas: ${folderResult.error || 'Error desconocido'}`);
+      return;
+    }
+
+    setNewArtisanSlugInput('');
     setStatusType('success');
-    setStatusMessage('Nuevo artesano creado. Completa sus datos y luego guarda el módulo.');
+    setStatusMessage('Nuevo artesano creado con carpetas listas (perfil, galería, equipo y video). Ahora sube archivos y guarda el módulo.');
   }
 
   function removeSelectedArtisan() {
@@ -492,13 +535,48 @@ export default function ArtEditor() {
     setSelectedArtisanId(remainingArtisans[0].id);
   }
 
+  async function ensureFoldersForSelectedArtisan() {
+    const folderSlug = selectedArtisanFolderSlug;
+    if (!folderSlug) {
+      setStatusType('error');
+      setStatusMessage('No se pudo generar el slug de carpeta para este artesano.');
+      return;
+    }
+
+    const result = await apiClient.arte.artisans.ensureFolders(folderSlug);
+    if (!result.success) {
+      setStatusType('error');
+      setStatusMessage(`No se pudieron preparar carpetas: ${result.error || 'Error desconocido'}`);
+      return;
+    }
+
+    setStatusType('success');
+    setStatusMessage('Carpetas del artesano preparadas correctamente.');
+  }
+
+  async function copyRouteToClipboard(routeLabel: string, routeValue: string) {
+    try {
+      await navigator.clipboard.writeText(routeValue);
+      setStatusType('success');
+      setStatusMessage(`Ruta copiada: ${routeLabel}`);
+    } catch {
+      setStatusType('error');
+      setStatusMessage('No se pudo copiar la ruta automáticamente.');
+    }
+  }
+
   async function uploadToSelectedArtisan(field: 'img' | 'video', file: File) {
     try {
       setUploadingLabel(`Subiendo ${field === 'img' ? 'imagen' : 'video'}...`);
-      const uploadedPath = await uploadFileToArteFolder(file);
+      const ext = getFileExtension(file.name) || (field === 'video' ? '.mp4' : '.jpg');
+      const folder = field === 'img'
+        ? `arte/${selectedArtisan.id}/01_perfil`
+        : `arte/${selectedArtisan.id}/04_video`;
+      const filename = field === 'img' ? `principal${ext}` : `proceso${ext}`;
+      const uploadedPath = await uploadFileToArteFolder(file, folder, filename);
       updateArtisanField(field, uploadedPath);
       setStatusType('success');
-      setStatusMessage(`${field === 'img' ? 'Imagen' : 'Video'} actualizado.`);
+      setStatusMessage(`${field === 'img' ? 'Imagen' : 'Video'} actualizado en su carpeta correspondiente.`);
     } catch (error) {
       setStatusType('error');
       setStatusMessage(error instanceof Error ? error.message : 'No se pudo subir el archivo.');
@@ -510,10 +588,12 @@ export default function ArtEditor() {
   async function uploadGalleryItem(index: number, file: File) {
     try {
       setUploadingLabel('Subiendo imagen de galería...');
-      const uploadedPath = await uploadFileToArteFolder(file);
+      const ext = getFileExtension(file.name) || '.jpg';
+      const filename = `obra-${String(index + 1).padStart(2, '0')}${ext}`;
+      const uploadedPath = await uploadFileToArteFolder(file, `arte/${selectedArtisan.id}/02_galeria`, filename);
       updateGalleryItem(index, uploadedPath);
       setStatusType('success');
-      setStatusMessage('Imagen de galería actualizada.');
+      setStatusMessage('Imagen de galería actualizada en su carpeta correspondiente.');
     } catch (error) {
       setStatusType('error');
       setStatusMessage(error instanceof Error ? error.message : 'No se pudo subir la imagen.');
@@ -728,10 +808,26 @@ export default function ArtEditor() {
                 <p className="text-xs font-black uppercase tracking-[0.25em] text-secondary">Cuadros</p>
                 <h2 className="text-xl font-black text-on-surface">Obras / Artesanos</h2>
               </div>
-              <button type="button" onClick={addArtisan} className="flex items-center gap-2 rounded-2xl bg-secondary px-4 py-2 text-sm font-bold text-surface hover:brightness-110">
+            </div>
+            <div className="mb-4 rounded-2xl border border-outline-variant/20 bg-surface p-4">
+              <label className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant">
+                Nombre de carpeta (slug)
+              </label>
+              <input
+                value={newArtisanSlugInput}
+                onChange={(event) => setNewArtisanSlugInput(toSlug(event.target.value))}
+                placeholder="ejemplo: angel-velasco"
+                className="w-full rounded-2xl border border-outline-variant/30 bg-surface-container-low px-4 py-3 text-sm text-on-surface outline-none focus:border-secondary"
+              />
+              <p className="mt-2 text-xs text-on-surface-variant">
+                Si lo dejas vacío, se genera automáticamente. Si ya existe, se crea una variante única.
+              </p>
+              <button type="button" onClick={addArtisan} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-secondary px-4 py-3 text-sm font-bold text-surface hover:brightness-110">
                 <Plus className="h-4 w-4" /> Crear artesano
               </button>
             </div>
+
+            <div className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant">Artesanos creados</div>
             <div className="space-y-2">
               {content.artisans.map((artisan) => {
                 const active = artisan.id === selectedArtisan.id;
@@ -739,6 +835,7 @@ export default function ArtEditor() {
                   <button key={artisan.id} type="button" onClick={() => setSelectedArtisanId(artisan.id)} className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${active ? 'border-secondary bg-secondary/10 text-on-surface' : 'border-outline-variant/20 bg-surface text-on-surface-variant hover:border-secondary/40 hover:text-on-surface'}`}>
                     <p className="font-bold">{artisan.name}</p>
                     <p className="text-xs uppercase tracking-[0.22em] opacity-70">{artisan.title}</p>
+                    <p className="mt-1 break-all text-[10px] uppercase tracking-[0.16em] text-secondary/90">{artisan.id}</p>
                   </button>
                 );
               })}
@@ -779,6 +876,31 @@ export default function ArtEditor() {
                 <label className="mb-2 block text-xs font-black uppercase tracking-[0.22em] text-on-surface-variant">Descripción corta del cuadro</label>
                 <textarea value={selectedArtisan.desc} onChange={(event) => updateArtisanField('desc', event.target.value)} rows={4} className="w-full rounded-2xl border border-outline-variant/30 bg-surface px-4 py-3 text-sm text-on-surface outline-none focus:border-secondary" />
               </div>
+
+              <div className="md:col-span-2 rounded-2xl border border-outline-variant/20 bg-surface px-4 py-4 text-sm text-on-surface-variant">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-secondary">Rutas de carpetas del artesano</p>
+                <div className="mt-2 space-y-2">
+                  {[
+                    { label: 'Perfil', value: `/contenido/arte/${selectedArtisanFolderSlug}/01_perfil` },
+                    { label: 'Galería', value: `/contenido/arte/${selectedArtisanFolderSlug}/02_galeria` },
+                    { label: 'Equipo', value: `/contenido/arte/${selectedArtisanFolderSlug}/03_equipo` },
+                    { label: 'Video', value: `/contenido/arte/${selectedArtisanFolderSlug}/04_video` },
+                  ].map((item) => (
+                    <div key={item.label} className="flex flex-col gap-2 rounded-xl border border-outline-variant/20 bg-surface-container-low px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="break-all text-xs sm:text-sm">
+                        <span className="font-black text-on-surface">{item.label}:</span> {item.value}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => copyRouteToClipboard(item.label, item.value)}
+                        className="inline-flex w-fit items-center justify-center rounded-lg border border-secondary/40 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-secondary hover:bg-secondary/10"
+                      >
+                        Copiar ruta
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </section>
 
@@ -807,6 +929,9 @@ export default function ArtEditor() {
                 event.target.value = '';
               }} />
             </label>
+            <button type="button" onClick={ensureFoldersForSelectedArtisan} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-outline-variant/40 px-4 py-3 text-sm font-bold text-on-surface hover:bg-surface">
+              <Plus className="h-4 w-4" /> Preparar carpetas del artesano
+            </button>
           </aside>
         </div>
       )}

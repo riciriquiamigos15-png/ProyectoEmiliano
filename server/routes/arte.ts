@@ -1,7 +1,52 @@
 import { Router } from 'express';
 import { StorageService } from '../services/StorageService.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const router = Router();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+function sanitizeSlug(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+router.post('/arte/artisans/ensure-folders', (req, res) => {
+  try {
+    const rawSlug = typeof req.body?.slug === 'string' ? req.body.slug : '';
+    const artisanSlug = sanitizeSlug(rawSlug);
+
+    if (!artisanSlug) {
+      return res.status(400).json({ success: false, error: 'Slug de artesano inválido' });
+    }
+
+    const artisanRoot = path.join(__dirname, '../../contenido/arte', artisanSlug);
+    const folders = ['01_perfil', '02_galeria', '03_equipo', '04_video'];
+
+    folders.forEach((folder) => {
+      fs.mkdirSync(path.join(artisanRoot, folder), { recursive: true });
+    });
+
+    res.json({
+      success: true,
+      data: {
+        slug: artisanSlug,
+        root: `/contenido/arte/${artisanSlug}`,
+        profile: `/contenido/arte/${artisanSlug}/01_perfil`,
+        gallery: `/contenido/arte/${artisanSlug}/02_galeria`,
+        team: `/contenido/arte/${artisanSlug}/03_equipo`,
+        video: `/contenido/arte/${artisanSlug}/04_video`,
+      },
+      message: 'Estructura de carpetas lista',
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'No se pudieron crear las carpetas del artesano' });
+  }
+});
 
 router.get('/arte/editor-content', (req, res) => {
   try {

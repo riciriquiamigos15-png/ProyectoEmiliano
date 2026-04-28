@@ -30,7 +30,7 @@ export default function HomeEditor() {
     artTitle: 'ARTE',
     artImage: '/contenido/inicio/Inicio_4.jpg',
     musicTitle: 'MÚSICA',
-    musicImage: '/contenido/musica/Banda_Pillaro.png',
+    musicImage: '/contenido/musica/imagenes/Banda_Pillaro.png',
     infoTitle: 'INFORMACIÓN',
     infoImage: '/contenido/informacion/Danza_1.jpg',
   });

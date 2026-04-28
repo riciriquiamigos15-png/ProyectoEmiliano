@@ -111,6 +111,11 @@ export const apiClient = {
         request<any>('DELETE', '/arte/editor-content'),
     },
 
+    artisans: {
+      ensureFolders: (slug: string) =>
+        request<any>('POST', '/arte/artisans/ensure-folders', { slug }),
+    },
+
     // Máscaras
     masks: {
       getAll: () =>

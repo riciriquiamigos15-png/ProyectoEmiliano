@@ -1,0 +1,25 @@
+GUIA RAPIDA - NUEVO CARETERO
+
+1) Duplica la carpeta "plantilla-nuevo-caretero" y renombrala como:
+   nombre-apellido
+   Ejemplo: juan-perez
+
+2) Coloca los archivos en estas subcarpetas:
+   01_perfil  -> foto principal del caretero
+   02_galeria -> 3 fotos de caretas (o mas)
+   03_equipo  -> fotos del equipo (si aplica)
+   04_video   -> video del proceso (mp4)
+
+3) Nombres recomendados de archivos:
+   01_perfil/principal.jpg
+   02_galeria/obra-01.jpg
+   02_galeria/obra-02.jpg
+   02_galeria/obra-03.jpg
+   03_equipo/miembro-01.jpg
+   03_equipo/miembro-02.jpg
+   04_video/proceso.mp4
+
+4) Si trabaja solo:
+   - En 03_equipo puedes dejar vacio o repetir una foto del perfil.
+
+5) Luego actualiza rutas en el contenido/editor cuando agregues el nuevo caretero.
